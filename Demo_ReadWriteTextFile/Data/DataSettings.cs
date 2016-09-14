@@ -8,6 +8,7 @@ namespace Demo_ReadWriteTextFile
 {
     public class DataSettings
     {
-        public const string dataFilePath = "Data\\PlayerHistory.txt";
+        public const string DataFilePath = "Data\\PlayerHistory.txt";
+        public const char Delineator = ',';
     }
 }

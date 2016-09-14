@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\PlayerHistory.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PlayerHistory.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
