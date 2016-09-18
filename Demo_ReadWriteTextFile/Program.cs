@@ -12,15 +12,19 @@ namespace Demo_ReadWriteTextFile
     {
         static void Main(string[] args)
         {
-
+            //
+            // run the application loop
+            //
             MainMenu();
-
 
             Console.WriteLine("Thank you for using our program.");
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// application loop
+        /// </summary>
         private static void MainMenu()
         {
             bool usingMenu = true;
@@ -58,18 +62,54 @@ namespace Demo_ReadWriteTextFile
                     //
                     case '1':
                         //
-                        // read in all of the historic scores and place them in a list of HistoricScore objects
+                        // historic scores will be stored internally in the application as a list of objects
                         //
                         List<HistoricScore> historicScores = new List<HistoricScore>();
-                        historicScores = ReadPlayerHistory();
 
-                        DisplayHistoricScores(historicScores);
+                        //
+                        // attempt to read from the data file
+                        //
+                        try
+                        {
+                            historicScores = ReadPlayerHistory();
+                            DisplayHistoricScores(historicScores);
+                        }
+                        //
+                        // catch the first I/O error
+                        //
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+
+                            DisplayContinuePrompt();
+                        }
+
                         break;
                     //
                     // add a new historic score
                     //
                     case '2':
-                        DisplayAddAPlayerHistory();
+                        string playerHistory;
+
+                        playerHistory =  DisplayGetAPlayerHistory();
+
+                        //
+                        // attempt to write to file
+                        //
+                        try
+                        {
+                            WritePlayerHistory(playerHistory);
+                        }
+                        //
+                        // catch the first I/O error
+                        //
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+
+                            DisplayContinuePrompt();
+                        }
+
                         break;
                     //
                     // quit the program
@@ -87,6 +127,10 @@ namespace Demo_ReadWriteTextFile
             }
         }
 
+
+        /// <summary>
+        /// helper method to display continue prompt
+        /// </summary>
         private static void DisplayContinuePrompt()
         {
             Console.WriteLine();
@@ -94,6 +138,9 @@ namespace Demo_ReadWriteTextFile
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// helper method to display a header with text
+        /// </summary>
         private static void DisplayHeader(string headerText)
         {
             Console.Clear();
@@ -102,7 +149,11 @@ namespace Demo_ReadWriteTextFile
             Console.WriteLine(headerText);
             Console.WriteLine();
         }
-
+        
+        /// <summary>
+        /// display a list of historic score
+        /// </summary>
+        /// <param name="historicScores"></param>
         private static void DisplayHistoricScores(List<HistoricScore> historicScores)
         {
             DisplayHeader("List of Historical Scores");
@@ -118,7 +169,11 @@ namespace Demo_ReadWriteTextFile
             DisplayContinuePrompt();
         }
 
-        private static void DisplayAddAPlayerHistory()
+        /// <summary>
+        /// display prompts to get a new player score to save
+        /// </summary>
+        /// <returns>string to write line to text file</returns>
+        private static string DisplayGetAPlayerHistory()
         {
             //
             // get player name and score
@@ -137,23 +192,43 @@ namespace Demo_ReadWriteTextFile
             sb.Append(playersName + DataSettings.Delineator);
             sb.Append(playersScore + DataSettings.Delineator);
 
-            //
-            // initialize a StreamWriter object for writing to a file
-            //
-            StreamWriter sWriter = new StreamWriter(DataSettings.DataFilePath, true);
-
-            //
-            // read all data from the data file
-            //
-            using (sWriter)
-            {
-                sWriter.WriteLine(sb);
-            }
-
-            DisplayContinuePrompt();
+            return sb.ToString();
         }
 
+        /// <summary>
+        /// write player history to text file
+        /// </summary>
+        /// <param name="playerHistory">string that is the line to write to the text file</param>
+        private static void WritePlayerHistory(string playerHistory)
+        {
+            try
+            {
+                //
+                // initialize a StreamWriter object for writing to a file
+                //
+                StreamWriter sWriter = new StreamWriter(DataSettings.DataFilePath, true);
 
+                //
+                // read all data from the data file
+                //
+                using (sWriter)
+                {
+                    sWriter.WriteLine(playerHistory);
+                }
+            }
+            //
+            // an I/O error was encountered
+            //
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Read all historic player scores
+        /// </summary>
+        /// <returns>list of historic scores</returns>
         private static List<HistoricScore> ReadPlayerHistory()
         {
             const char delineator = ','; // delineator in a CSV file
@@ -165,39 +240,55 @@ namespace Demo_ReadWriteTextFile
             //
             List<string> historicScoresStringList = new List<string>();
 
-            //
-            // initialize a StreamReader object for reading from a file
-            //
-            StreamReader sReader = new StreamReader(DataSettings.DataFilePath);
-
-            //
-            // read all data from the data file
-            //
-            using (sReader)
+            try
             {
                 //
-                // keep reading lines of text until the end of the file is reached
+                // initialize a StreamReader object for reading from a file
                 //
-                while (!sReader.EndOfStream)
+                StreamReader sReader = new StreamReader(DataSettings.DataFilePath);
+
+                //
+                // read all data from the data file
+                //
+                using (sReader)
                 {
-                    historicScoresStringList.Add(sReader.ReadLine());
+                    //
+                    // keep reading lines of text until the end of the file is reached
+                    //
+                    while (!sReader.EndOfStream)
+                    {
+                        historicScoresStringList.Add(sReader.ReadLine());
+                    }
                 }
+            }
+            //
+            // an I/O error was encountered
+            //
+            catch (Exception)
+            {
+                throw;
             }
 
             //
-            // separate lines into fields and build out the list of historic scores
+            // separate each line of text from the file into HistoricScore objects
             //
-            foreach (string historicScore in historicScoresStringList)
+            if (historicScoresStringList != null)
             {
                 //
-                // use the Split method and the delineator on the array to separate each property into an array of properties
+                // separate lines into fields and build out the list of historic scores
                 //
-                string[] fields = historicScore.Split(delineator);
+                foreach (string historicScore in historicScoresStringList)
+                {
+                    //
+                    // use the Split method and the delineator on the array to separate each property into an array of properties
+                    //
+                    string[] fields = historicScore.Split(delineator);        /// </summary>
 
-                //
-                // populate the historic scores list with HistoricScore objects
-                //
-                historicScores.Add(new HistoricScore() { PlayerName = fields[0], PlayerScore = Convert.ToInt32(fields[1]) });
+                    //
+                    // populate the historic scores list with HistoricScore objects
+                    //
+                    historicScores.Add(new HistoricScore() { PlayerName = fields[0], PlayerScore = Convert.ToInt32(fields[1]) });
+                }
             }
 
             return historicScores;
