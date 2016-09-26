@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_ReadWriteTextFile", "Demo_ReadWriteTextFile\Demo_ReadWriteTextFile.csproj", "{B7B08A32-861A-4C37-8FAF-0A4432380A50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_ReadWriteTextFile.Starter", "Demo_ReadWriteTextFile\Demo_ReadWriteTextFile.Starter.csproj", "{B7B08A32-861A-4C37-8FAF-0A4432380A50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_ReadWriteTextFile.Starter", "Demo_ReadWriteTextFile.Starter\Demo_ReadWriteTextFile.Starter.csproj", "{EFE9383E-AB56-48C7-804C-CF6BECD4A8A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_ReadWriteTextFile.Solution", "Demo_ReadWriteTextFile.Starter\Demo_ReadWriteTextFile.Solution.csproj", "{EFE9383E-AB56-48C7-804C-CF6BECD4A8A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
