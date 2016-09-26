@@ -158,6 +158,13 @@ namespace Demo_ReadWriteTextFile
         {
             DisplayHeader("List of Historical Scores");
 
+            foreach (var historicScore in historicScores)
+            {
+                //
+                // note use of C# 6.0 string interpolation
+                //
+                Console.WriteLine($"{historicScore.PlayerName} - {historicScore.PlayerScore}");
+            }
 
             DisplayContinuePrompt();
         }
@@ -182,6 +189,8 @@ namespace Demo_ReadWriteTextFile
             // StringBuilder class
             //
             StringBuilder sb = new StringBuilder();
+            sb.Append(playersName + DataSettings.Delineator);
+            sb.Append(playersScore + DataSettings.Delineator);
 
             return sb.ToString();
         }
@@ -197,20 +206,22 @@ namespace Demo_ReadWriteTextFile
                 //
                 // initialize a StreamWriter object for writing to a file
                 //
-
+                StreamWriter sWriter = new StreamWriter(DataSettings.DataFilePath, true);
 
                 //
                 // read all data from the data file
-                // note: using statement
                 //
-
+                using (sWriter)
+                {
+                    sWriter.WriteLine(playerHistory);
+                }
             }
             //
             // an I/O error was encountered
             //
             catch (Exception)
             {
-
+                throw;
             }
         }
 
@@ -234,19 +245,28 @@ namespace Demo_ReadWriteTextFile
                 //
                 // initialize a StreamReader object for reading from a file
                 //
+                StreamReader sReader = new StreamReader(DataSettings.DataFilePath);
 
                 //
                 // read all data from the data file
-                // note: using statement
                 //
-
+                using (sReader)
+                {
+                    //
+                    // keep reading lines of text until the end of the file is reached
+                    //
+                    while (!sReader.EndOfStream)
+                    {
+                        historicScoresStringList.Add(sReader.ReadLine());
+                    }
+                }
             }
             //
             // an I/O error was encountered
             //
             catch (Exception)
             {
-
+                throw;
             }
 
             //
@@ -259,7 +279,15 @@ namespace Demo_ReadWriteTextFile
                 //
                 foreach (string historicScore in historicScoresStringList)
                 {
+                    //
+                    // use the Split method and the delineator on the array to separate each property into an array of properties
+                    //
+                    string[] fields = historicScore.Split(delineator);        /// </summary>
 
+                    //
+                    // populate the historic scores list with HistoricScore objects
+                    //
+                    historicScores.Add(new HistoricScore() { PlayerName = fields[0], PlayerScore = Convert.ToInt32(fields[1]) });
                 }
             }
 
